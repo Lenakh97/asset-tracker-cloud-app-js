@@ -19,10 +19,10 @@ export const Navigation = ({
 		<Nav navbar={navbar}>
 			<NavItem>
 				<Link className="nav-link" to="/cats" onClick={onClick}>
-					{emojify('🐱')} Cats
+					{emojify('🛰️')} Devices
 				</Link>
 			</NavItem>
-			<NavItem>
+			{/*<NavItem>
 				<Link className="nav-link" to="/cats-on-map" onClick={onClick}>
 					{emojify('🗺️')} Map
 				</Link>
@@ -31,7 +31,7 @@ export const Navigation = ({
 				<Link className="nav-link" to="/about" onClick={onClick}>
 					{emojify('ℹ️')} About
 				</Link>
-			</NavItem>
+			</NavItem>*/}
 			<NavItem>
 				<Button
 					className="nav-link"

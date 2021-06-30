@@ -2,6 +2,7 @@ import {
 	DeviceConfig,
 	Gps,
 	Battery,
+	SkyKeyInformation,
 	DeviceInformation,
 	RoamingInformation,
 	Environment,
@@ -19,6 +20,7 @@ export type ReportedThingState = {
 	cfg?: Partial<DeviceConfig>
 	gps?: Gps
 	bat?: Battery
+	skyKey?: Partial<SkyKeyInformation>
 	dev?: AWSDeviceInformation
 	roam?: RoamingInformation
 	env?: Environment
@@ -36,7 +38,7 @@ export type AWSReportedState = ReportedState & {
 export type ThingState = {
 	reported: ReportedThingState
 	desired: {
-		cfg?: Partial<DeviceConfig>
+		skyKey?: Partial<SkyKeyInformation>
 	}
 	metadata: ThingStateMetadataProperty
 }

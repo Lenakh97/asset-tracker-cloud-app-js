@@ -158,8 +158,8 @@ export const CatActions = ({ catId }: { catId: string }) => {
 																	mqttEndpoint,
 																}).then((connection) => () => connection.end())
 															}
-															updateDeviceConfig={async (cfg) =>
-																updateThingConfig(iotData)(catId)(cfg).then(
+															updateDeviceConfig={async (skyKey) =>
+																updateThingConfig(iotData)(catId)(skyKey).then(
 																	() => {
 																		update({
 																			...cat,
@@ -283,7 +283,7 @@ export const CatActions = ({ catId }: { catId: string }) => {
 																				value: -dbmToRSRP(value),
 																			}))}
 																			type={'line'}
-																			max={-70}
+																			/*max={-50}*/
 																		/>
 																	)}
 																</HistoricalDataLoader>
@@ -324,6 +324,7 @@ export const CatActions = ({ catId }: { catId: string }) => {
 																</HistoricalDataLoader>
 															</Collapsable>
 															<hr />
+															{/*
 															<Collapsable
 																id={'cat:environment'}
 																title={<h3>{emojify('🌡️ Temperature')}</h3>}
@@ -352,10 +353,14 @@ export const CatActions = ({ catId }: { catId: string }) => {
 																	)}
 																</HistoricalDataLoader>
 															</Collapsable>
-															<hr />
+															<hr />*/}
 															<Collapsable
 																id={'cat:button'}
-																title={<h3>{emojify('🚨 Button')}</h3>}
+																title={
+																	<h3>
+																		{emojify('🚨 Last Unlocked timestamps')}
+																	</h3>
+																}
 															>
 																<HistoricalDataLoader<{
 																	date: Date
@@ -366,7 +371,7 @@ export const CatActions = ({ catId }: { catId: string }) => {
 																	}
 																	deviceId={catId}
 																	QueryString={(table) => `		
-																	SELECT measure_value::double AS value, time as date
+																	SELECT time as date
 																	FROM ${table}
 																	WHERE deviceId='${catId}' 
 																	AND measure_name='btn'

@@ -3,7 +3,11 @@ import {
 	ReportedThingState,
 	AWSReportedState,
 } from '../@types/aws-device'
-import { MakeReceivedProperty, DeviceConfig } from '../@types/device-state'
+import {
+	MakeReceivedProperty,
+	DeviceConfig,
+	SkyKeyInformation,
+} from '../@types/device-state'
 
 /**
  * AWS meta does not report timestamps for top level arrays or objects, so find the first timestamp in an array or nested object.
@@ -57,6 +61,14 @@ export const toReportedWithReceivedAt = ({
 	...(reported.bat !== undefined && metadata.reported.bat !== undefined
 		? {
 				bat: toReceivedProps(reported.bat, metadata.reported.bat),
+		  }
+		: undefined),
+	...(reported.skyKey !== undefined && metadata.reported.skyKey !== undefined
+		? {
+				skyKey: toReceivedProps(
+					reported.skyKey,
+					metadata.reported.skyKey,
+				) as Partial<MakeReceivedProperty<SkyKeyInformation>>,
 		  }
 		: undefined),
 	...(reported.roam !== undefined && metadata.reported.roam !== undefined

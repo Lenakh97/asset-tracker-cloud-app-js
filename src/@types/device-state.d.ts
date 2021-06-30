@@ -33,6 +33,11 @@ export type Battery = {
 	ts: number
 }
 
+export type SkyKeyInformation = {
+	unlockTime: number
+	lockTimeoutSeconds: number
+}
+
 export type DeviceInformation = {
 	v: {
 		band: number
@@ -67,6 +72,9 @@ export type MakeReceivedProperty<Type> = {
 export type ReportedConfigState = Partial<MakeReceivedProperty<DeviceConfig>>
 export type ReportedGps = MakeReceivedProperty<Gps>
 export type ReportedBattery = MakeReceivedProperty<Battery>
+export type ReportedSkyKeyInformation = Partial<
+	MakeReceivedProperty<SkyKeyInformation>
+>
 export type ReportedEnvironment = MakeReceivedProperty<Environment>
 export type ReportedDeviceInformation = MakeReceivedProperty<DeviceInformation>
 export type ReportedRoamingInformation =
@@ -76,6 +84,7 @@ export type ReportedState = {
 	cfg?: ReportedConfigState
 	gps?: ReportedGps
 	bat?: ReportedBattery
+	skyKey?: ReportedSkyKeyInformation
 	dev?: ReportedDeviceInformation
 	roam?: ReportedRoamingInformation
 	env?: ReportedEnvironment

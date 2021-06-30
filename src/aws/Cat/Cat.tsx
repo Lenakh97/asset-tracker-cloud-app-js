@@ -14,7 +14,7 @@ import { DeviceInfo } from '../../DeviceInformation/DeviceInformation'
 import { CatCard } from '../../Cat/CatCard'
 import { CatHeader, CatPersonalization } from '../../Cat/CatPersonality'
 import { ThingState } from '../../@types/aws-device'
-import { DeviceConfig } from '../../@types/device-state'
+import { DeviceConfig, SkyKeyInformation } from '../../@types/device-state'
 import { Settings } from '../../Settings/Settings'
 import { toReportedWithReceivedAt } from '../toReportedWithReceivedAt'
 import { Option, isSome } from 'fp-ts/lib/Option'
@@ -59,7 +59,7 @@ export const Cat = ({
 		executionNumber: number
 	}) => Promise<void>
 	getThingState: () => Promise<Option<ThingState>>
-	updateDeviceConfig: (cfg: Partial<DeviceConfig>) => Promise<void>
+	updateDeviceConfig: (skyKey: Partial<SkyKeyInformation>) => Promise<void>
 	cat: CatInfo
 	credentials: ICredentials
 	children: React.ReactElement<any> | React.ReactElement<any>[]
@@ -176,27 +176,6 @@ export const Cat = ({
 								/>
 							</Toggle>
 						)}
-						{reportedWithReceived?.gps && (
-							<Toggle>
-								<div className={'info'}>
-									{reportedWithReceived.gps.v.value.spd !== undefined &&
-										emojify(
-											` 🏃${Math.round(
-												reportedWithReceived.gps.v.value.spd,
-											)}m/s`,
-										)}
-									{reportedWithReceived.gps.v.value.alt !== undefined &&
-										emojify(
-											`✈️ ${Math.round(reportedWithReceived.gps.v.value.alt)}m`,
-										)}
-									<ReportedTime
-										receivedAt={reportedWithReceived.gps.v.receivedAt}
-										reportedAt={new Date(reportedWithReceived.gps.ts.value)}
-										staleAfterSeconds={expectedSendIntervalInSeconds}
-									/>
-								</div>
-							</Toggle>
-						)}
 						{reportedWithReceived?.bat && (
 							<Toggle>
 								<div className={'info'}>
@@ -210,18 +189,17 @@ export const Cat = ({
 								</div>
 							</Toggle>
 						)}
-						{reportedWithReceived?.env && (
+						{reportedWithReceived?.skyKey && (
 							<Toggle>
 								<div className={'info'}>
-									{emojify(`🌡️ ${reportedWithReceived.env.v.value.temp}°C`)}
-									{emojify(
-										`💦 ${Math.round(reportedWithReceived.env.v.value.hum)}%`,
-									)}
+									{emojify(`🚨  ${reportedWithReceived.skyKey.unlockTime}`)}
+									<span />{' '}
+									{/* 
 									<ReportedTime
-										receivedAt={reportedWithReceived.env.v.receivedAt}
-										reportedAt={new Date(reportedWithReceived.env.ts.value)}
+										receivedAt={reportedWithReceived.skyKey.unlockTime.receivedAt}
+										reportedAt={new Date(reportedWithReceived.skyKey.unlockTime.value)}
 										staleAfterSeconds={expectedSendIntervalInSeconds}
-									/>
+									/>*/}
 								</div>
 							</Toggle>
 						)}
@@ -229,17 +207,6 @@ export const Cat = ({
 				)}
 			</CardHeader>
 			<CardBody>
-				<Collapsable
-					id={'cat:personalization'}
-					title={<h3>{emojify('⭐ Personalization')}</h3>}
-				>
-					<CatPersonalization
-						cat={cat}
-						isNameValid={isNameValid}
-						onAvatarChange={onAvatarChange}
-						onNameChange={onNameChange}
-					/>
-				</Collapsable>
 				{state && (
 					<>
 						<hr />
@@ -248,9 +215,9 @@ export const Cat = ({
 							title={<h3>{emojify('⚙️ Settings')}</h3>}
 						>
 							<Settings
-								reported={reportedWithReceived?.cfg}
-								desired={state.desired?.cfg}
-								key={JSON.stringify(state?.desired?.cfg ?? {})}
+								reported={reportedWithReceived?.skyKey}
+								desired={state.desired?.skyKey}
+								key={JSON.stringify(state?.desired?.skyKey ?? {})}
 								onSave={(config) => {
 									updateDeviceConfig(config)
 										.catch(setError)
@@ -261,7 +228,7 @@ export const Cat = ({
 														...state,
 														desired: {
 															...state.desired,
-															cfg: config,
+															skyKey: config,
 														},
 													}
 												}
@@ -284,6 +251,7 @@ export const Cat = ({
 								key={`${cat.version}`}
 								device={reportedWithReceived.dev}
 								roaming={reportedWithReceived.roam}
+								skyKey={reportedWithReceived.skyKey}
 								appV={reportedWithReceived.dev?.v?.value?.appV}
 								dataStaleAfterSeconds={expectedSendIntervalInSeconds}
 							/>
@@ -296,6 +264,25 @@ export const Cat = ({
 						<Collapsable
 							id={'cat:fota'}
 							title={<h3>{emojify('🌩️ Device Firmware Upgrade (FOTA)')}</h3>}
+						>
+							<FOTA
+								key={`${cat.version}`}
+								device={reported.dev}
+								onCreateUpgradeJob={onCreateUpgradeJob}
+								listUpgradeJobs={listUpgradeJobs}
+								cancelUpgradeJob={cancelUpgradeJob}
+								deleteUpgradeJob={deleteUpgradeJob}
+								cloneUpgradeJob={cloneUpgradeJob}
+							/>
+						</Collapsable>
+					</>
+				)}
+				{reported?.dev && (
+					<>
+						<hr />
+						<Collapsable
+							id={'cat:pw_update'}
+							title={<h3>{emojify('🗝️ Upload Passwordfile')}</h3>}
 						>
 							<FOTA
 								key={`${cat.version}`}

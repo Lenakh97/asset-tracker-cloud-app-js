@@ -9,15 +9,11 @@ export const HistoricalButtonPresses = ({
 }) => (
 	<Table>
 		<thead>
-			<tr>
-				<th>Button</th>
-				<th>Time</th>
-			</tr>
+			<th>Time</th>
 		</thead>
 		<tbody>
 			{data.map(({ value, date }, k) => (
 				<tr key={k}>
-					<td>{value}</td>
 					<td>
 						{date.toLocaleString()}{' '}
 						<small>

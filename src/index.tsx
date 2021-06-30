@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
 export enum CloudFlavour {
-	Azure = 'Azure',
+	//Azure = 'Azure',
 	AWS = 'AWS',
 }
 
@@ -40,7 +40,7 @@ const onError = (err: Error) => {
 	console.error(err)
 }
 switch (cloudFlavour) {
-	case CloudFlavour.Azure:
+	/*case CloudFlavour.Azure:
 		import('./azure/App')
 			.then((azureApp) => {
 				launch(
@@ -54,7 +54,7 @@ switch (cloudFlavour) {
 				)
 			})
 			.catch(onError)
-		break
+		break*/
 	case CloudFlavour.AWS:
 	default:
 		import('./aws/App')

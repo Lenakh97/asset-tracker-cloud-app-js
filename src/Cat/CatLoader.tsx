@@ -49,7 +49,9 @@ export function CatLoader<
 							...cat.right,
 							id: catId,
 							name: cat.right.name ?? catId,
-							avatar: cat.right.avatar ?? 'https://placekitten.com/75/75',
+							avatar:
+								cat.right.avatar ??
+								'https://previews.123rf.com/images/muslumstock/muslumstock1808/muslumstock180805577/107657295-tiny-key-vector-icon-isolated-on-transparent-background-tiny-key-logo-concept.jpg',
 						}
 						setCat(c)
 						setNavbar(<CatNavbar name={c.name} avatar={c.avatar} />)

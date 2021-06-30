@@ -48,16 +48,14 @@ const AzureHeader = styled.header`
 `
 
 const AWSHeader = styled(AzureHeader)`
-	background-color: #f90;
+	background-color: #8390f1;
 `
 
 const flavouredHeaders = {
-	[CloudFlavour.Azure]: AzureHeader,
 	[CloudFlavour.AWS]: AWSHeader,
 }
 
 const navbarClassname = {
-	[CloudFlavour.Azure]: 'navbar-dark',
 	[CloudFlavour.AWS]: 'navbar-light',
 }
 

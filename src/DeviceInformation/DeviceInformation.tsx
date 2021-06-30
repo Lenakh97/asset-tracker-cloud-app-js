@@ -4,7 +4,9 @@ import styled from 'styled-components'
 import {
 	ReportedRoamingInformation,
 	ReportedDeviceInformation,
+	ReportedSkyKeyInformation,
 } from '../@types/device-state'
+import { RelativeTime } from '../RelativeTime/RelativeTime'
 
 const StyledReportedTime = styled(ReportedTime)`
 	font-size: 85%;
@@ -32,11 +34,13 @@ export const DeviceInformationDl = styled.dl`
 export const DeviceInfo = ({
 	device,
 	roaming,
+	skyKey,
 	appV,
 	dataStaleAfterSeconds,
 }: {
 	device: ReportedDeviceInformation
 	roaming?: ReportedRoamingInformation
+	skyKey?: ReportedSkyKeyInformation
 	appV?: string
 	dataStaleAfterSeconds: number
 }) => (
@@ -91,9 +95,28 @@ export const DeviceInfo = ({
 				</>
 			)}
 		</DeviceInformationDl>
+		<h4>Status</h4>
+		<DeviceInformationDl>
+			{skyKey && (
+				<>
+					<dt>Last unlocked</dt>
+					<dd>
+						<code>{skyKey.unlockTime}</code>
+					</dd>
+				</>
+			)}
+		</DeviceInformationDl>
 		<StyledReportedTime
-			receivedAt={roaming?.v.receivedAt ?? device.v.receivedAt}
-			reportedAt={new Date(roaming?.ts.value ?? device.ts.value)}
+			receivedAt={
+				roaming?.v.receivedAt ??
+				device.v.receivedAt ??
+				skyKey?.unlockTime?.receivedAt
+			}
+			reportedAt={
+				new Date(
+					roaming?.ts.value ?? device.ts.value ?? skyKey?.unlockTime?.value,
+				)
+			}
 			staleAfterSeconds={dataStaleAfterSeconds}
 		/>
 	</div>

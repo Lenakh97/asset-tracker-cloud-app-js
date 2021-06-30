@@ -7,8 +7,14 @@ import { formatDistanceToNow } from 'date-fns'
 import { emojify } from '../Emojify/Emojify'
 import styled from 'styled-components'
 import { mobileBreakpoint } from '../Styles'
-import { DeviceConfig, ReportedConfigState } from '../@types/device-state'
+import {
+	DeviceConfig,
+	ReportedConfigState,
+	SkyKeyInformation,
+	ReportedSkyKeyInformation,
+} from '../@types/device-state'
 import { default as introJs } from 'intro.js'
+import { number } from '@amcharts/amcharts4/core'
 
 const intro = introJs()
 
@@ -85,23 +91,23 @@ export const Settings = ({
 	reported,
 	desired,
 }: {
-	reported?: ReportedConfigState
-	desired?: Partial<DeviceConfig>
-	onSave: (config: Partial<DeviceConfig>) => void
+	reported?: ReportedSkyKeyInformation
+	desired?: Partial<SkyKeyInformation>
+	onSave: (config: Partial<SkyKeyInformation>) => void
 }) => {
-	const r: ReportedConfigState = reported ?? {}
+	const r: ReportedSkyKeyInformation = reported ?? {}
 
-	const [newDesired, setNewDesired] = useState<Partial<DeviceConfig>>(
+	const [newDesired, setNewDesired] = useState<Partial<SkyKeyInformation>>(
 		desired ?? {},
 	)
 
 	const hasInitial = desired === undefined
 	const [changed, setChanged] = useState(hasInitial)
 
-	const updateConfig = (cfg: Partial<DeviceConfig>) => {
+	const updateConfig = (skyKey: Partial<SkyKeyInformation>) => {
 		const updated = {
 			...newDesired,
-			...cfg,
+			...skyKey,
 		}
 		setNewDesired(updated)
 		if (!hasInitial) {
@@ -115,11 +121,6 @@ export const Settings = ({
 				[property]: parser !== undefined ? parser(value) : parseInt(value, 10),
 			})
 		}
-
-	const isActive =
-		newDesired.act !== undefined
-			? newDesired.act === true
-			: r.act?.value === true
 
 	const [visible, setVisible] = useState(
 		window.localStorage.getItem('asset-tracker:settings:help') !== 'hidden',
@@ -149,132 +150,16 @@ export const Settings = ({
 				</Help>
 			</Alert>
 			<SettingsForm>
-				<fieldset data-intro={'This sets the operation mode of the tracker.'}>
-					<legend>Mode</legend>
-					<FormGroup>
-						<ButtonGroup>
-							<OutDatedWarning
-								desired={newDesired.act}
-								reported={r.act}
-								onNotReported={
-									<Button
-										color={'danger'}
-										disabled={true}
-										title={'Device has not reported this setting, yet.'}
-									>
-										{emojify('❓')}
-									</Button>
-								}
-								onOutDated={(r) => (
-									<Button
-										color={'danger'}
-										outline={true}
-										disabled={true}
-										title={`Device has last synced this setting ${formatDistanceToNow(
-											r.receivedAt,
-										)} ago. Current value: ${JSON.stringify(r.value)}.`}
-									>
-										{emojify('⭕')}
-									</Button>
-								)}
-							/>
-							<Button
-								color={'info'}
-								data-intro={
-									'In <em>Passive</em> mode, the tracker will wait for movement (triggered by the accelerometer) before sending an update to the cloud.'
-								}
-								outline={isActive}
-								onClick={() => {
-									updateConfig({ act: false })
-								}}
-							>
-								Passive
-							</Button>
-							<Button
-								color={'success'}
-								data-intro={
-									'In <em>Active</em> mode, the tracker will send an update in a configurable interval.'
-								}
-								outline={!isActive}
-								onClick={() => {
-									updateConfig({ act: true })
-								}}
-							>
-								Active
-							</Button>
-						</ButtonGroup>
-					</FormGroup>
-				</fieldset>
-				<fieldset data-intro={'How long to try to acquire a GPS fix.'}>
-					<legend>GPS Timeout</legend>
+				<fieldset data-intro={'How long the Skykey is going to be unlocked.'}>
+					<legend>Lock Timeout Seconds</legend>
 					<NumberConfigSetting
-						id={'gpst'}
-						desired={newDesired.gpst}
-						reported={r.gpst}
+						id={'lockTimeoutSeconds'}
+						desired={newDesired.lockTimeoutSeconds}
+						reported={r.lockTimeoutSeconds}
 						example={60}
-						onChange={updateConfigProperty('gpst')}
+						onChange={updateConfigProperty('lockTimeoutSeconds')}
 						minimum={1}
 						maximum={MAX_INT32}
-					/>
-				</fieldset>
-				<fieldset data-intro={'This configures the <em>passive</em> mode.'}>
-					<legend>Passive Mode Settings</legend>
-					<SideBySide>
-						<NumberConfigSetting
-							label={'Movement Resolution'}
-							intro={
-								'After detecting movement send an update and wait this amount of time until movement again can trigger the next update.'
-							}
-							id={'mvres'}
-							desired={newDesired.mvres}
-							reported={r.mvres}
-							onChange={updateConfigProperty('mvres')}
-							minimum={1}
-							maximum={MAX_INT32}
-							example={300}
-						/>
-						<NumberConfigSetting
-							label={'Movement Timeout'}
-							intro={'Send updates to the cloud at least this often.'}
-							id={'mvt'}
-							example={3600}
-							desired={newDesired.mvt}
-							reported={r.mvt}
-							onChange={updateConfigProperty('mvt')}
-							minimum={1}
-							maximum={MAX_INT32}
-						/>
-					</SideBySide>
-					<NumberConfigSetting
-						label={'Accelerometer threshold'}
-						intro={
-							'Minimal absolute value for an accelerometer reading to be considered movement. Range: 0 to 19.6133 m/s².'
-						}
-						id={'acct'}
-						example={0.1}
-						step={0.1}
-						minimum={0}
-						maximum={19.6133}
-						unit={'m/s²'}
-						desired={newDesired.acct}
-						reported={r.acct}
-						onChange={updateConfigProperty('acct', parseFloat)}
-					/>
-				</fieldset>
-				<fieldset data-intro={'This configures the <em>active</em> mode.'}>
-					<legend>Active Mode Settings</legend>
-					<NumberConfigSetting
-						label={'Active Wait Time'}
-						intro={
-							'Wait this amount of seconds until sending the next update. The actual interval will be this time plus the time it takes to get a GPS fix.'
-						}
-						id={'actwt'}
-						desired={newDesired.actwt}
-						reported={r.actwt}
-						onChange={updateConfigProperty('actwt')}
-						minimum={1}
-						maximum={MAX_INT32}
-						example={60}
 					/>
 				</fieldset>
 				<FooterWithFullWidthButton>
