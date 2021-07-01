@@ -16,9 +16,7 @@ export const updateThingConfig =
 					JSON.stringify({
 						state: {
 							desired: {
-								skyKey: {
-									lockTimeoutSeconds,
-								},
+								skyKey: lockTimeoutSeconds,
 							},
 						},
 					}),

@@ -34,6 +34,7 @@ export type Battery = {
 }
 
 export type SkyKeyInformation = {
+	databaseLocation: string
 	unlockTime: number
 	lockTimeoutSeconds: number
 }

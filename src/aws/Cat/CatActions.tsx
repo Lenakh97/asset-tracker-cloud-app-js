@@ -31,6 +31,8 @@ import { CatLoader } from '../../Cat/CatLoader'
 import { left, right } from 'fp-ts/lib/Either'
 import { HttpRequest } from '@aws-sdk/protocol-http'
 import { dbmToRSRP } from '@nordicsemiconductor/rsrp-bar'
+import { updateSkyKeyDatabase } from '../updateSkyKeyDatabase'
+import { CreatePasswordUpdateJob } from '../PasswordUpload/CreatePasswordUpdateJob'
 
 export const CatActions = ({ catId }: { catId: string }) => {
 	const [deleted, setDeleted] = useState(false)
@@ -85,6 +87,12 @@ export const CatActions = ({ catId }: { catId: string }) => {
 											s3,
 											bucketName: fotaBucketName,
 											iot,
+										})
+
+										const createPasswordUpdateJob = updateSkyKeyDatabase({
+											s3,
+											bucketName: fotaBucketName,
+											iotData,
 										})
 
 										const listUpgradeJobs = listUpgradeFirmwareJobs({
@@ -251,6 +259,12 @@ export const CatActions = ({ catId }: { catId: string }) => {
 																	}
 																/>
 															)}
+															onPasswordUpdate={(file) => {
+																void createPasswordUpdateJob({
+																	file,
+																	thingName: cat.id,
+																})
+															}}
 														>
 															<hr />
 															<Collapsable

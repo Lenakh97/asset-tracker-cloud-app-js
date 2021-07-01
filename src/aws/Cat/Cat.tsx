@@ -18,6 +18,7 @@ import { DeviceConfig, SkyKeyInformation } from '../../@types/device-state'
 import { Settings } from '../../Settings/Settings'
 import { toReportedWithReceivedAt } from '../toReportedWithReceivedAt'
 import { Option, isSome } from 'fp-ts/lib/Option'
+import { CreatePasswordUpdateJob } from '../PasswordUpload/CreatePasswordUpdateJob'
 
 const intro = introJs()
 
@@ -45,6 +46,7 @@ export const Cat = ({
 	updateDeviceConfig,
 	listenForStateChange,
 	catMap,
+	onPasswordUpdate,
 }: {
 	onAvatarChange: (avatar: Blob) => void
 	onNameChange: (name: string) => void
@@ -67,6 +69,7 @@ export const Cat = ({
 		onNewState: (newState: ThingState) => void
 	}) => Promise<() => void>
 	catMap: (state: ThingState) => React.ReactElement<any>
+	onPasswordUpdate: (database: File) => unknown
 }) => {
 	const [state, setState] = useState<ThingState>()
 	const [error, setError] = useState<Error>()
@@ -284,14 +287,9 @@ export const Cat = ({
 							id={'cat:pw_update'}
 							title={<h3>{emojify('🗝️ Upload Passwordfile')}</h3>}
 						>
-							<FOTA
-								key={`${cat.version}`}
-								device={reported.dev}
-								onCreateUpgradeJob={onCreateUpgradeJob}
-								listUpgradeJobs={listUpgradeJobs}
-								cancelUpgradeJob={cancelUpgradeJob}
-								deleteUpgradeJob={deleteUpgradeJob}
-								cloneUpgradeJob={cloneUpgradeJob}
+							<CreatePasswordUpdateJob
+								onFile={onPasswordUpdate}
+								onError={setError}
 							/>
 						</Collapsable>
 					</>
