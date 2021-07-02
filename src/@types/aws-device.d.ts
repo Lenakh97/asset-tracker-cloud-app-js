@@ -41,4 +41,5 @@ export type ThingState = {
 		skyKey?: Partial<SkyKeyInformation>
 	}
 	metadata: ThingStateMetadataProperty
+	version: number
 }

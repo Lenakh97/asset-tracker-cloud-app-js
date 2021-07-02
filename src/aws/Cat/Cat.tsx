@@ -88,6 +88,7 @@ export const Cat = ({
 			.then((maybeState) => {
 				if (isSome(maybeState)) {
 					setStateIfNotCanceled(maybeState.value)
+					console.log({ state: maybeState.value })
 				}
 			})
 			.catch(setErrorIfNotCanceled)
@@ -195,12 +196,15 @@ export const Cat = ({
 						{reportedWithReceived?.skyKey && (
 							<Toggle>
 								<div className={'info'}>
-									{emojify(`🚨  ${reportedWithReceived.skyKey.unlockTime}`)}
+									{emojify(
+										`🚨  ${console.log(
+											reportedWithReceived.skyKey.unlockTime,
+										)}`,
+									)}
 									<span />{' '}
-									{/* 
-									<ReportedTime
-										receivedAt={reportedWithReceived.skyKey.unlockTime.receivedAt}
-										reportedAt={new Date(reportedWithReceived.skyKey.unlockTime.value)}
+									{/*<ReportedTime
+										receivedAt={reportedWithReceived.skyKey?.unlockTime?.receivedAt}
+										reportedAt={new Date(reportedWithReceived.skyKey?.unlockTime?.value)}
 										staleAfterSeconds={expectedSendIntervalInSeconds}
 									/>*/}
 								</div>
@@ -288,6 +292,7 @@ export const Cat = ({
 							title={<h3>{emojify('🗝️ Upload Passwordfile')}</h3>}
 						>
 							<CreatePasswordUpdateJob
+								key={`${state?.version}`}
 								onFile={onPasswordUpdate}
 								onError={setError}
 							/>

@@ -58,6 +58,7 @@ export const connectAndListenForStateChange = async ({
 					reported: shadow.state.reported,
 					desired: shadow.state.desired,
 					metadata: shadow.metadata,
+					version: shadow.version,
 				}
 				console.log('Updated state', deviceId, newState)
 				onNewState(newState)

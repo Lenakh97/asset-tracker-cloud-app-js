@@ -22,6 +22,7 @@ export const getThingState =
 			const s = {
 				...shadow.state,
 				metadata: shadow.metadata,
+				version: shadow.version,
 			}
 			return some(s)
 		} catch (err) {
