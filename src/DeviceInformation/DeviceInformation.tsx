@@ -101,21 +101,17 @@ export const DeviceInfo = ({
 				<>
 					<dt>Last unlocked</dt>
 					<dd>
-						<code>{skyKey.unlockTime}</code>
+						<code>{skyKey?.unlockTime?.value}</code>
 					</dd>
 				</>
 			)}
 		</DeviceInformationDl>
 		<StyledReportedTime
 			receivedAt={
-				roaming?.v.receivedAt ??
-				device.v.receivedAt ??
-				skyKey?.unlockTime?.receivedAt
+				roaming?.v.receivedAt ?? device.v.receivedAt ?? skyKey?.unlockTime
 			}
 			reportedAt={
-				new Date(
-					roaming?.ts.value ?? device.ts.value ?? skyKey?.unlockTime?.value,
-				)
+				new Date(roaming?.ts.value ?? device.ts.value ?? skyKey?.unlockTime)
 			}
 			staleAfterSeconds={dataStaleAfterSeconds}
 		/>

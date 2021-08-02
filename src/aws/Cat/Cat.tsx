@@ -197,9 +197,7 @@ export const Cat = ({
 							<Toggle>
 								<div className={'info'}>
 									{emojify(
-										`🚨  ${console.log(
-											reportedWithReceived.skyKey.unlockTime,
-										)}`,
+										`🚨  ${new Date(state?.reported.skyKey?.unlockTime ?? 0)}`,
 									)}
 									<span />{' '}
 									{/*<ReportedTime
